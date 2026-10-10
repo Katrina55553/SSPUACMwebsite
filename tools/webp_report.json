@@ -1,0 +1,275 @@
+[
+ {
+  "file": "icpc1.jpg",
+  "w": 800,
+  "h": 600,
+  "before": 191108,
+  "after": 106840
+ },
+ {
+  "file": "icpc2.jpg",
+  "w": 500,
+  "h": 333,
+  "before": 92296,
+  "after": 30866
+ },
+ {
+  "file": "icpc3.jpg",
+  "w": 800,
+  "h": 534,
+  "before": 213380,
+  "after": 76894
+ },
+ {
+  "file": "icpc4.jpg",
+  "w": 800,
+  "h": 533,
+  "before": 538894,
+  "after": 59626
+ },
+ {
+  "file": "ccpc1.jpg",
+  "w": 1024,
+  "h": 679,
+  "before": 299472,
+  "after": 115244
+ },
+ {
+  "file": "ccpc2.jpg",
+  "w": 1024,
+  "h": 683,
+  "before": 397419,
+  "after": 177698
+ },
+ {
+  "file": "ccpc3.jpg",
+  "w": 1024,
+  "h": 682,
+  "before": 296784,
+  "after": 106932
+ },
+ {
+  "file": "ccpc4.jpg",
+  "w": 474,
+  "h": 355,
+  "before": 147225,
+  "after": 74918
+ },
+ {
+  "file": "logo.jpg",
+  "w": 1024,
+  "h": 1001,
+  "before": 268615,
+  "after": 44398
+ },
+ {
+  "file": "prize/fuzhou.jpg",
+  "w": 1024,
+  "h": 767,
+  "before": 152974,
+  "after": 56406
+ },
+ {
+  "file": "prize/ccpc_nanchang.png",
+  "w": 797,
+  "h": 429,
+  "before": 502311,
+  "after": 32808
+ },
+ {
+  "file": "prize/nanchang.png",
+  "w": 627,
+  "h": 524,
+  "before": 779684,
+  "after": 87336
+ },
+ {
+  "file": "prize/xian.png",
+  "w": 672,
+  "h": 449,
+  "before": 396687,
+  "after": 19690
+ },
+ {
+  "file": "prize/wuhan2026.jpg",
+  "w": 1024,
+  "h": 767,
+  "before": 181112,
+  "after": 76690
+ },
+ {
+  "file": "prize/shanghai.jpg",
+  "w": 1024,
+  "h": 623,
+  "before": 162015,
+  "after": 68374
+ },
+ {
+  "file": "prize/harbin.jpg",
+  "w": 1024,
+  "h": 682,
+  "before": 184940,
+  "after": 83152
+ },
+ {
+  "file": "prize/ccpc_shanghai2025.jpg",
+  "w": 1270,
+  "h": 794,
+  "before": 212550,
+  "after": 37284
+ },
+ {
+  "file": "prize/kunming.jpg",
+  "w": 1024,
+  "h": 575,
+  "before": 214199,
+  "after": 110094
+ },
+ {
+  "file": "prize/icpc_xian2024.jpg",
+  "w": 768,
+  "h": 1024,
+  "before": 310108,
+  "after": 185770
+ },
+ {
+  "file": "prize/icpc_kunming2024.jpg",
+  "w": 805,
+  "h": 1008,
+  "before": 468900,
+  "after": 134616
+ },
+ {
+  "file": "prize/ccpc_shanghai2024.jpg",
+  "w": 1024,
+  "h": 811,
+  "before": 306835,
+  "after": 62038
+ },
+ {
+  "file": "prize/caoxiaolin.jpg",
+  "w": 720,
+  "h": 720,
+  "before": 43510,
+  "after": 23034
+ },
+ {
+  "file": "prize/j2017lbh.png",
+  "w": 474,
+  "h": 478,
+  "before": 332270,
+  "after": 23472
+ },
+ {
+  "file": "prize/doroshi.jpg",
+  "w": 940,
+  "h": 939,
+  "before": 161450,
+  "after": 113816
+ },
+ {
+  "file": "prize/cupper.jpg",
+  "w": 940,
+  "h": 940,
+  "before": 41537,
+  "after": 18408
+ },
+ {
+  "file": "prize/alfredgit.jpg",
+  "w": 940,
+  "h": 940,
+  "before": 166945,
+  "after": 100000
+ },
+ {
+  "file": "prize/liujunwei.jpg",
+  "w": 960,
+  "h": 960,
+  "before": 20672,
+  "after": 6830
+ },
+ {
+  "file": "prize/moskaunia.jpg",
+  "w": 428,
+  "h": 428,
+  "before": 62683,
+  "after": 30926
+ },
+ {
+  "file": "prize/zhangzb.jpg",
+  "w": 1021,
+  "h": 1024,
+  "before": 158622,
+  "after": 62806
+ },
+ {
+  "file": "prize/sxkane.jpg",
+  "w": 474,
+  "h": 474,
+  "before": 50065,
+  "after": 20760
+ },
+ {
+  "file": "prize/swdjb.jpg",
+  "w": 66,
+  "h": 66,
+  "before": 1947,
+  "after": 828
+ },
+ {
+  "file": "contest/icpc.png",
+  "w": 2667,
+  "h": 2080,
+  "before": 162188,
+  "after": 112512
+ },
+ {
+  "file": "contest/ccpc.png",
+  "w": 722,
+  "h": 726,
+  "before": 269689,
+  "after": 61754
+ },
+ {
+  "file": "contest/gplt.png",
+  "w": 363,
+  "h": 442,
+  "before": 75949,
+  "after": 10072
+ },
+ {
+  "file": "contest/lanqiao.png",
+  "w": 452,
+  "h": 91,
+  "before": 9170,
+  "after": 8676
+ },
+ {
+  "file": "contest/baidu.png",
+  "w": 262,
+  "h": 69,
+  "before": 24140,
+  "after": 3156
+ },
+ {
+  "file": "contest/raicom.png",
+  "w": 521,
+  "h": 189,
+  "before": 106521,
+  "after": 11126
+ },
+ {
+  "file": "contest/chuanzhi.png",
+  "w": 340,
+  "h": 82,
+  "before": 16484,
+  "after": 4566
+ },
+ {
+  "file": "contest/mati.png",
+  "w": 280,
+  "h": 280,
+  "before": 14720,
+  "after": 6262
+ }
+]

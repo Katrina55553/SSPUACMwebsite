@@ -4,7 +4,7 @@
  * School: Shanghai Second Polytechnic University (上海第二工业大学)
  */
 
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+/* Google Fonts loaded via <link> in each HTML head (parallel, non-blocking chain) */
 
 /* --- Root variables and themes --- */
 :root {

@@ -4,16 +4,14 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Wait slightly for components to be injected in components.js
-    setTimeout(() => {
-        initThemeToggle();
-        initMobileNav();
-        initHeaderScroll();
-        initParallax();
-        initTypewriter();
-        initSlideshow();
-        initStatsCounter();
-    }, 50);
+    // components.js runs first (script order), header/footer already injected
+    initThemeToggle();
+    initMobileNav();
+    initHeaderScroll();
+    initParallax();
+    initTypewriter();
+    initSlideshow();
+    initStatsCounter();
 });
 
 // 1. Theme Toggle Controller
@@ -75,7 +73,7 @@ function initHeaderScroll() {
         }
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     handleScroll(); // Run initially
 }
 
@@ -131,6 +129,13 @@ function initSlideshow() {
 
     let slideIndex = 0;
     let slideTimer;
+
+    // Slides are display:none so their lazy images won't fetch until shown;
+    // preload them into cache so the 5s rotation never flashes blank.
+    slides.forEach(slide => {
+        const img = slide.querySelector('img[loading="lazy"]');
+        if (img) new Image().src = img.currentSrc || img.src;
+    });
 
     function showSlides(index) {
         if (index >= slides.length) slideIndex = 0;

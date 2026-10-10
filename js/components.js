@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Official Logo Component (SSPU ACM)
 const logoSVG = `
-<img src="images/logo.jpg" alt="SSPU ACM Logo" class="sspu-logo-img" style="height: 40px; width: auto; border-radius: 6px; display: block;" />
+<img src="images/logo.webp" alt="SSPU ACM Logo" class="sspu-logo-img" style="height: 40px; width: auto; border-radius: 6px; display: block;" />
 `;
 
 function injectHeader() {

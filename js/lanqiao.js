@@ -11,9 +11,7 @@ let currentPage = 1;
 let sortKey = "default";
 let sortAsc = false;
 
-document.addEventListener("DOMContentLoaded", () => {
-  setTimeout(initLanqiaoPage, 50);
-});
+document.addEventListener("DOMContentLoaded", initLanqiaoPage);
 
 // 计算十三届及之后的奖项统计（用于排行）
 function computeRankingStats(person) {
