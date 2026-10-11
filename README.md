@@ -45,8 +45,8 @@ acmwebsite/
 
 1. **克隆仓库**：
    ```bash
-   git clone https://github.com/YourUsername/acmwebsite.git
-   cd acmwebsite
+   git clone https://github.com/Katrina55553/SSPUACMwebsite.git
+   cd SSPUACMwebsite
    ```
 
 2. **本地预览**：
@@ -56,6 +56,12 @@ acmwebsite/
      python -m http.server 8000
      ```
      打开浏览器访问 `http://localhost:8000`。
+
+## 自动部署到 Ubuntu 服务器
+
+项目已提供 GitHub Actions CI/CD：PR 到 `main` 时检查本地资源、JSON 数据和 JavaScript 语法；推送到 `main` 后通过 SSH 自动同步到 `/var/www/acmwebsite`，并检查 Nginx 返回的部署版本。
+
+首次使用需要设置服务器目录权限、部署公钥及仓库 Secrets。完整操作步骤见 [部署文档](docs/deployment.md)。
 
 ## 补充与修改说明
 

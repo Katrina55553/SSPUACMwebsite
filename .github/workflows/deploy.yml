@@ -1,0 +1,140 @@
+name: Website CI/CD
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# 不取消正在进行的部署，避免文件同步到一半被中断。
+concurrency:
+  group: website-${{ github.ref }}
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  check:
+    name: Check and package website
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      - name: Package public files
+        run: |
+          set -euo pipefail
+          mkdir _site
+          cp ./*.html _site/
+          cp -R css js images data _site/
+          printf '%s\n' "$GITHUB_SHA" > _site/deploy-version.txt
+
+      - name: Check local resources, JSON and JavaScript
+        run: python3 scripts/check_site.py _site
+
+      - name: Upload checked website
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: website
+          path: _site/
+          if-no-files-found: error
+          retention-days: 7
+
+  deploy:
+    name: Deploy to Ubuntu
+    needs: check
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      SITE_CHECK_URL: ${{ vars.SITE_CHECK_URL || 'http://127.0.0.1:8081' }}
+    steps:
+      - name: Download checked website
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
+        with:
+          name: website
+          path: _site/
+
+      - name: Configure SSH
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_PORT: ${{ secrets.SSH_PORT || '22' }}
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
+        run: |
+          set -euo pipefail
+          for name in SSH_HOST SSH_USER SSH_PRIVATE_KEY SSH_KNOWN_HOSTS; do
+            if [[ -z "${!name}" ]]; then
+              echo "::error::Missing repository secret: $name"
+              exit 1
+            fi
+          done
+          [[ "$SSH_HOST" =~ ^[a-zA-Z0-9][a-zA-Z0-9.:-]*$ ]] || { echo '::error::Invalid SSH_HOST'; exit 1; }
+          [[ "$SSH_USER" =~ ^[a-zA-Z_][a-zA-Z0-9_-]*$ ]] || { echo '::error::Invalid SSH_USER'; exit 1; }
+          [[ "$SSH_PORT" =~ ^[0-9]{1,5}$ ]] || { echo '::error::Invalid SSH_PORT'; exit 1; }
+          (( 10#$SSH_PORT >= 1 && 10#$SSH_PORT <= 65535 )) || { echo '::error::Invalid SSH_PORT'; exit 1; }
+          [[ "$SITE_CHECK_URL" =~ ^https?://[a-zA-Z0-9:/._-]+$ ]] || { echo '::error::Invalid SITE_CHECK_URL'; exit 1; }
+
+          ssh_dir="$RUNNER_TEMP/acm-ssh"
+          install -d -m 700 "$ssh_dir"
+          printf '%s\n' "$SSH_PRIVATE_KEY" | tr -d '\r' > "$ssh_dir/key"
+          printf '%s\n' "$SSH_KNOWN_HOSTS" | tr -d '\r' > "$ssh_dir/known_hosts"
+          chmod 600 "$ssh_dir/key" "$ssh_dir/known_hosts"
+          ssh-keygen -y -P '' -f "$ssh_dir/key" > /dev/null
+          cat > "$ssh_dir/config" <<EOF
+          Host acm-deploy
+              HostName $SSH_HOST
+              User $SSH_USER
+              Port $SSH_PORT
+              IdentityFile "$ssh_dir/key"
+              UserKnownHostsFile "$ssh_dir/known_hosts"
+              StrictHostKeyChecking yes
+              IdentitiesOnly yes
+              BatchMode yes
+              ConnectTimeout 15
+          EOF
+          chmod 600 "$ssh_dir/config"
+
+      - name: Check server deployment directory
+        run: |
+          set -euo pipefail
+          ssh -F "$RUNNER_TEMP/acm-ssh/config" acm-deploy \
+            'command -v rsync >/dev/null && test -d /var/www/acmwebsite && test -w /var/www/acmwebsite' \
+            || { echo '::error::Install rsync on the server and grant SSH_USER write access to /var/www/acmwebsite (see docs/deployment.md).'; exit 1; }
+
+      - name: Sync website files
+        run: |
+          set -euo pipefail
+          test -s _site/index.html
+          test -s _site/data/sspu-data.json
+          test -s _site/data/lanqiao-sspu.json
+          # 目标是这个项目的专用目录；保留可能用于证书验证的 .well-known。
+          rsync --recursive --times --perms --compress \
+            --delay-updates --delete-delay --chmod=D755,F644 \
+            --exclude='.well-known/' \
+            -e "ssh -F '$RUNNER_TEMP/acm-ssh/config'" \
+            _site/ acm-deploy:/var/www/acmwebsite/
+
+      - name: Verify Nginx serves this deployment
+        run: |
+          set -euo pipefail
+          deployed_sha=$(ssh -F "$RUNNER_TEMP/acm-ssh/config" acm-deploy \
+            "curl --fail --silent --show-error --max-time 20 --retry 3 --retry-delay 2 '${SITE_CHECK_URL%/}/deploy-version.txt'")
+          [[ "$deployed_sha" == "$GITHUB_SHA" ]] \
+            || { echo '::error::Nginx did not serve the deployed commit. Check its root and SITE_CHECK_URL.'; exit 1; }
+
+      - name: Remove SSH credentials
+        if: always()
+        run: |
+          rm -f -- "$RUNNER_TEMP/acm-ssh/key" \
+            "$RUNNER_TEMP/acm-ssh/known_hosts" "$RUNNER_TEMP/acm-ssh/config"
