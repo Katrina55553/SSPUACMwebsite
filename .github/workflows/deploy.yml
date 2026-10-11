@@ -109,8 +109,16 @@ jobs:
         run: |
           set -euo pipefail
           ssh -F "$RUNNER_TEMP/acm-ssh/config" acm-deploy \
-            'command -v rsync >/dev/null && test -d /var/www/acmwebsite && test -w /var/www/acmwebsite' \
-            || { echo '::error::Install rsync on the server and grant SSH_USER write access to /var/www/acmwebsite (see docs/deployment.md).'; exit 1; }
+            'command -v rsync >/dev/null && command -v curl >/dev/null && test -d /var/www/acmwebsite && test -w /var/www/acmwebsite' \
+            || { echo '::error::Install rsync and curl on the server and grant SSH_USER write access to /var/www/acmwebsite (see docs/deployment.md).'; exit 1; }
+
+      - name: Check Nginx connection before syncing
+        run: |
+          set -euo pipefail
+          # 首次部署时根目录可以暂时没有首页，但 HTTP 服务必须已监听。
+          ssh -F "$RUNNER_TEMP/acm-ssh/config" acm-deploy \
+            "curl --silent --show-error --output /dev/null --max-time 15 '${SITE_CHECK_URL%/}/'" \
+            || { echo "::error::Cannot connect to Nginx at $SITE_CHECK_URL. Start the website or set the repository variable SITE_CHECK_URL to its actual URL."; exit 1; }
 
       - name: Sync website files
         run: |
@@ -119,8 +127,9 @@ jobs:
           test -s _site/data/sspu-data.json
           test -s _site/data/lanqiao-sspu.json
           # 目标是这个项目的专用目录；保留可能用于证书验证的 .well-known。
-          rsync --recursive --times --perms --compress \
+          rsync --recursive --times --perms --compress --checksum \
             --delay-updates --delete-delay --chmod=D755,F644 \
+            --info=progress2 --stats --timeout=120 \
             --exclude='.well-known/' \
             -e "ssh -F '$RUNNER_TEMP/acm-ssh/config'" \
             _site/ acm-deploy:/var/www/acmwebsite/

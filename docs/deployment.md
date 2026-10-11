@@ -110,7 +110,9 @@ git commit -m "ci: add website validation and SSH deployment"
 git push origin main
 ```
 
-在 GitHub 的 **Actions → Website CI/CD** 查看执行结果。检查成功后才会部署；部署完成后会验证 Nginx 返回的版本。手动运行时选择 `main`，其他分支只检查。
+在 GitHub 的 **Actions → Website CI/CD** 查看执行结果。检查成功后才会部署；上传前确认 Nginx 的 HTTP 端口可连接，部署完成后会验证 Nginx 返回的版本。手动运行时选择 `main`，其他分支只检查。
+
+同步日志会显示传输进度和统计；rsync 按文件内容校验跳过未变化的文件，避免 GitHub checkout 和解压后的修改时间导致重复同步。连续 120 秒没有传输数据时会退出并报告错误。
 
 以后修改网站、提交并推送到 `main` 即可自动发布，服务器不需要再手动 `git pull`。
 
@@ -128,6 +130,7 @@ python scripts/check_site.py
 - `Permission denied (publickey)`：核对 SSH 用户、无密码私钥，以及该用户 `authorized_keys` 中的公钥；云服务器可能还有 SSH 访问限制。
 - `Host key verification failed`：核对 `SSH_HOST`、`SSH_PORT` 和主机公钥，重新比较指纹后更新 `SSH_KNOWN_HOSTS`。
 - rsync 写入或删除失败：检查发布目录及其中已有文件是否都属于部署用户；再次执行第 1 步的权限命令。
+- `Cannot connect to Nginx` 或 `Connection refused`：服务器未监听 `SITE_CHECK_URL` 指定的端口。在服务器运行 `sudo ss -ltnp` 检查；启用网站的 Nginx 配置，或把仓库变量 `SITE_CHECK_URL` 改为实际地址后重新运行工作流。
 - 版本验证失败：文件可能已同步，但 Nginx 的 `root`、后端端口或 `SITE_CHECK_URL` 不匹配；修正后重新运行工作流。检查失败不会自动回滚，rsync 的延迟更新也不是整个站点的原子切换。
 - CI 报本地资源缺失：核对路径及文件名大小写，Linux 区分大小写。
 
